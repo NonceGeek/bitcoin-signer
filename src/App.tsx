@@ -15,6 +15,7 @@ function App() {
   });
   const [network, setNetwork] = useState("livenet");
 
+
   const getBasicInfo = async () => {
     const unisat = (window as any).unisat;
     const [address] = await unisat.getAccounts();
@@ -109,7 +110,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>Unisat Wallet Demo</p>
+        <p>Bitcoin Signer</p>
 
         {connected ? (
           <div
@@ -195,18 +196,23 @@ function SignPsbtCard() {
 }
 
 function SignMessageCard() {
-  const [message, setMessage] = useState("hello world~");
+  const [msg, setMsg] = useState<string>("");
+
+  useEffect(() => {
+    const queryParameters = new URLSearchParams(window.location.search);
+    const msg = queryParameters.get("msg");
+    setMsg(String(msg));
+  });
+
+  console.log("msg:" + msg);
   const [signature, setSignature] = useState("");
   return (
     <Card size="small" title="Sign Message" style={{ width: 300, margin: 10 }}>
       <div style={{ textAlign: "left", marginTop: 10 }}>
         <div style={{ fontWeight: "bold" }}>Message:</div>
-        <Input
-          defaultValue={message}
-          onChange={(e) => {
-            setMessage(e.target.value);
-          }}
-        ></Input>
+        <p>
+          <b>msg for signing: </b> {msg}
+        </p>
       </div>
       <div style={{ textAlign: "left", marginTop: 10 }}>
         <div style={{ fontWeight: "bold" }}>Signature:</div>
@@ -215,7 +221,7 @@ function SignMessageCard() {
       <Button
         style={{ marginTop: 10 }}
         onClick={async () => {
-          const signature = await (window as any).unisat.signMessage(message);
+          const signature = await (window as any).unisat.signMessage(msg);
           setSignature(signature);
         }}
       >
